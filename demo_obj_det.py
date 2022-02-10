@@ -87,28 +87,28 @@ def main(args):
                             shuffle=False)
 
     # run inference on a single example.
-    data = test_split[5]['data']
-    result = pipeline.run_inference(data)[0]
+    # data = test_split[5]['data']
+    # result = pipeline.run_inference(data)[0]
 
-    boxes = data['bbox_objs']
-    boxes.extend(result)
+    # boxes = data['bbox_objs']
+    # boxes.extend(result)
 
-    vis = Visualizer()
+    # vis = Visualizer()
 
-    lut = LabelLUT()
-    for val in sorted(dataset.label_to_names.keys()):
-        lut.add_label(val, val)
+    # lut = LabelLUT()
+    # for val in sorted(dataset.label_to_names.keys()):
+    #     lut.add_label(val, val)
 
-    # Uncommenting this assigns bbox color according to lut
-    # for key, val in sorted(dataset.label_to_names.items()):
-    #     lut.add_label(key, val)
+    # # Uncommenting this assigns bbox color according to lut
+    # # for key, val in sorted(dataset.label_to_names.items()):
+    # #     lut.add_label(key, val)
 
-    vis.visualize([{
-        "name": args.dataset_type,
-        'points': data['point']
-    }],
-                  lut,
-                  bounding_boxes=boxes)
+    # vis.visualize([{
+    #     "name": args.dataset_type,
+    #     'points': data['point']
+    # }],
+    #               lut,
+    #               bounding_boxes=boxes)
 
     # run inference on a multiple examples
     vis = Visualizer()
