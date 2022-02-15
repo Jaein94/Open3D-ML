@@ -289,7 +289,7 @@ class PointPillars(BaseModel):
                 name = self.lbl2name.get(label, "ignore")
                 inference_result[-1].append(
                     BEVBox3D(pos, dim, yaw, name, score, world_cam, cam_img))
-
+                # print(inference_result)
         return inference_result
 
 

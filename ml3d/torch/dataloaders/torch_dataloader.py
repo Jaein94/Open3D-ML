@@ -78,7 +78,11 @@ class TorchDataloader(Dataset):
         if self.cache_convert:
             data = self.cache_convert(attr['name'])
         elif self.preprocess:
+            print(index)
+            print(attr)
             data = self.preprocess(dataset.get_data(index), attr)
+            print(data)
+            print('@@@@')
         else:
             data = dataset.get_data(index)
 
