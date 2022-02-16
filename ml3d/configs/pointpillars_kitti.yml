@@ -1,12 +1,12 @@
 dataset:
   name: KITTI
-  dataset_path: # path/to/your/dataset
+  dataset_path: '/home/amlab/KITTI_point'
   cache_dir: ./logs/cache
   steps_per_epoch_train: 5000
 
 model:
   name: PointPillars
-  ckpt_path: # path/to/your/checkpoint
+  ckpt_path: './logs/pointpillars_kitti.pth'
 
   batcher: "ignore"
 
