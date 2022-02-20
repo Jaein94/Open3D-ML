@@ -42,27 +42,6 @@ def main(args):
     if framework == 'torch':
         import open3d.ml.torch as ml3d
         from ml3d.torch.dataloaders import TorchDataloader as Dataloader
-    else:
-        import tensorflow as tf
-        import open3d.ml.tf as ml3d
-
-        from ml3d.tf.dataloaders import TFDataloader as Dataloader
-
-        device = args.device
-        gpus = tf.config.experimental.list_physical_devices('GPU')
-        if gpus:
-            try:
-                for gpu in gpus:
-                    tf.config.experimental.set_memory_growth(gpu, True)
-                if device == 'cpu':
-                    tf.config.set_visible_devices([], 'GPU')
-                elif device == 'gpu':
-                    tf.config.set_visible_devices(gpus[0], 'GPU')
-                else:
-                    idx = device.split(':')[1]
-                    tf.config.set_visible_devices(gpus[int(idx)], 'GPU')
-            except RuntimeError as e:
-                print(e)
 
     classname = getattr(datasets, args.dataset_type)
     dataset = classname(args.dataset_path)
@@ -86,30 +65,6 @@ def main(args):
                             use_cache=False,
                             shuffle=False)
 
-    # run inference on a single example.
-    # data = test_split[5]['data']
-    # result = pipeline.run_inference(data)[0]
-
-    # boxes = data['bbox_objs']
-    # boxes.extend(result)
-
-    # vis = Visualizer()
-
-    # lut = LabelLUT()
-    # for val in sorted(dataset.label_to_names.keys()):
-    #     lut.add_label(val, val)
-
-    # # Uncommenting this assigns bbox color according to lut
-    # # for key, val in sorted(dataset.label_to_names.items()):
-    # #     lut.add_label(key, val)
-
-    # vis.visualize([{
-    #     "name": args.dataset_type,
-    #     'points': data['point']
-    # }],
-    #               lut,
-    #               bounding_boxes=boxes)
-
     # run inference on a multiple examples
     vis = Visualizer()
     lut = LabelLUT()
@@ -118,9 +73,10 @@ def main(args):
 
     boxes = []
     data_list = []
-    for idx in tqdm(range(100)):
+    for idx in tqdm(range(3)):
         data = test_split[idx]['data']
-
+        print(data)
+        
         result = pipeline.run_inference(data)[0]
 
         boxes = data['bbox_objs']

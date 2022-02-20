@@ -1693,8 +1693,8 @@ class Visualizer:
                   data,
                   lut=None,
                   bounding_boxes=None,
-                  width=1280,
-                  height=768):
+                  width=1920,
+                  height=900):
         """Visualize a custom point cloud data.
 
         Example:

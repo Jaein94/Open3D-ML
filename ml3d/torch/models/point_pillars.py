@@ -39,6 +39,7 @@ from ..modules.losses.cross_entropy import CrossEntropyLoss
 from ...datasets.utils import BEVBox3D
 from ...datasets.augment import ObjdetAugmentation
 
+import matplotlib.pyplot as plt
 
 class PointPillars(BaseModel):
     """Object detection model. Based on the PointPillars architecture
@@ -102,6 +103,8 @@ class PointPillars(BaseModel):
     def extract_feats(self, points):
         """Extract features from points."""
         voxels, num_points, coors = self.voxelize(points)
+        # plt.plot(coors[:,2].cpu(),coors[:,3].cpu(),'ro',markersize=3)
+        # plt.show()
         voxel_features = self.voxel_encoder(voxels, num_points, coors)
         batch_size = coors[-1, 0].item() + 1
         x = self.middle_encoder(voxel_features, coors, batch_size)
@@ -289,7 +292,7 @@ class PointPillars(BaseModel):
                 name = self.lbl2name.get(label, "ignore")
                 inference_result[-1].append(
                     BEVBox3D(pos, dim, yaw, name, score, world_cam, cam_img))
-
+                # print(inference_result)
         return inference_result
 
 
@@ -379,6 +382,9 @@ class PointPillarsVoxelization(torch.nn.Module):
         out_voxels = out_voxels[in_bounds]
         out_num_points = out_num_points[in_bounds]
 
+        print(out_voxels, out_voxels.shape)
+        print(out_coords)
+        print(out_num_points)
         return out_voxels, out_coords, out_num_points
 
 
@@ -551,7 +557,9 @@ class PillarFeatureNet(nn.Module):
 
         for pfn in self.pfn_layers:
             features = pfn(features, num_points)
-
+        print(features.squeeze(dim=1).shape)
+        # plt.imshow(features.squeeze(dim=1).cpu().T,cmap='gray')
+        # plt.show()
         return features.squeeze(dim=1)
 
 

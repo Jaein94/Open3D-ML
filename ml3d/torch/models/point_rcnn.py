@@ -55,16 +55,13 @@ from ...metrics import iou_3d
 class PointRCNN(BaseModel):
     """Object detection model. Based on the PoinRCNN architecture
     https://github.com/sshaoshuai/PointRCNN.
-
     The network is not trainable end-to-end, it requires pre-training of the RPN
     module, followed by training of the RCNN module.  For this the mode must be
     set to 'RPN', with this, the network only outputs intermediate results.  If
     the RPN module is trained, the mode can be set to 'RCNN' (default), with
     this, the second module can be trained and the output are the final
     predictions.
-
     For inference use the 'RCNN' mode.
-
     Args:
         name (string): Name of model.
             Default to "PointRCNN".
@@ -98,7 +95,7 @@ class PointRCNN(BaseModel):
         super().__init__(name=name, device=device, **kwargs)
         assert mode == "RPN" or mode == "RCNN"
         self.mode = mode
-
+        print(mode)
         self.augmenter = ObjdetAugmentation(self.cfg.augment, seed=self.rng)
         self.npoints = npoints
         self.classes = classes
@@ -114,8 +111,10 @@ class PointRCNN(BaseModel):
 
     def forward(self, inputs):
         points = torch.stack(inputs.point)
+        print(self.mode)
         with torch.set_grad_enabled(self.training and self.mode == "RPN"):
             if not self.mode == "RPN":
+
                 self.rpn.eval()
             cls_score, reg_score, backbone_xyz, backbone_features = self.rpn(
                 points)
@@ -123,7 +122,7 @@ class PointRCNN(BaseModel):
             with torch.no_grad():
                 rpn_scores_raw = cls_score[:, :, 0]
                 rois, _ = self.rpn.proposal_layer(rpn_scores_raw, reg_score,
-                                                  backbone_xyz)  # (B, M, 7)
+                                                backbone_xyz)  # (B, M, 7)
 
             output = {"rois": rois, "cls": cls_score, "reg": reg_score}
 
@@ -134,8 +133,8 @@ class PointRCNN(BaseModel):
                 pts_depth = torch.norm(backbone_xyz, p=2, dim=2)
 
             output = self.rcnn(rois, inputs.bboxes, backbone_xyz,
-                               backbone_features.permute((0, 2, 1)), seg_mask,
-                               pts_depth)
+                            backbone_features.permute((0, 2, 1)), seg_mask,
+                            pts_depth)
 
         return output
 
@@ -193,13 +192,10 @@ class PointRCNN(BaseModel):
 
     def filter_objects(self, bbox_objs):
         """Filter objects based on classes to train.
-
         Args:
             bbox_objs: Bounding box objects from dataset class.
-
         Returns:
             Filtered bounding box objects.
-
         """
         filtered = []
         for bb in bbox_objs:
@@ -242,21 +238,17 @@ class PointRCNN(BaseModel):
     @staticmethod
     def generate_rpn_training_labels(points, bboxes, bboxes_world, calib=None):
         """Generates labels for RPN network.
-
         Classifies each point as foreground/background based on points inside bbox.
         We don't train on ambiguous points which are just outside bounding boxes(calculated
         by `extended_boxes`).
         Also computes regression labels for bounding box proposals(in bounding box frame).
-
         Args:
             points: Input pointcloud.
             bboxes: bounding boxes in camera frame.
             bboxes_world: bounding boxes in world frame.
             calib: Calibration file for cam_to_world matrix.
-
         Returns:
             Classification and Regression labels.
-
         """
         cls_label = np.zeros((points.shape[0]), dtype=np.int32)
         reg_label = np.zeros((points.shape[0], 7),
@@ -443,7 +435,6 @@ def get_reg_loss(pred_reg,
                  get_ry_fine=False):
     """Bin-based 3D bounding boxes regression loss. See
     https://arxiv.org/abs/1812.04244 for more details.
-
     Args:
         pred_reg: (N, C)
         reg_label: (N, 7) [dx, dy, dz, h, w, l, ry]
@@ -966,11 +957,9 @@ class RCNN(nn.Module):
 
 def rotate_pc_along_y(pc, rot_angle):
     """Rotate point cloud along  Y axis.
-
     Args:
         params pc: (N, 3+C), (N, 3) is in the rectified camera coordinate
         rot_angle: rad scalar
-
     Returns:
         pc: updated pc with XYZ rotated.
     """
@@ -1078,7 +1067,6 @@ class ProposalLayer(nn.Module):
 
     def distance_based_proposal(self, scores, proposals, order):
         """Propose ROIs in two area based on the distance.
-
         Args:
             scores: (N)
             proposals: (N, 7)
@@ -1162,7 +1150,6 @@ def decode_bbox_target(roi_box3d,
                        loc_y_bin_size=0.25,
                        get_ry_fine=False):
     """Decode bounding box target.
-
     Args:
         roi_box3d: (N, 7)
         pred_reg: (N, C)
@@ -1274,7 +1261,6 @@ def decode_bbox_target(roi_box3d,
 
 def rotate_pc_along_y_torch(pc, rot_angle):
     """Rotate point cloud along Y axis.
-
     Args:
         pc: (N, 3 + C)
         rot_angle: (N)
@@ -1389,11 +1375,9 @@ class ProposalTargetLayer(nn.Module):
 
     def sample_rois_for_rcnn(self, roi_boxes3d, gt_boxes3d):
         """Sample ROIs for RCNN.
-
         Args:
             roi_boxes3d: (B, M, 7)
             gt_boxes3d: (B, N, 8) [x, y, z, h, w, l, ry, cls]
-
         Returns:
             batch_rois: (B, N, 7)
             batch_gt_of_rois: (B, N, 8)
@@ -1590,7 +1574,6 @@ class ProposalTargetLayer(nn.Module):
     @staticmethod
     def random_aug_box3d(box3d):
         """Random shift, scale, orientation.
-
         Args:
             box3d: (7) [x, y, z, h, w, l, ry]
         """
@@ -1618,7 +1601,6 @@ class ProposalTargetLayer(nn.Module):
 
     def data_augmentation(self, pts, rois, gt_of_rois):
         """Data augmentation.
-
         Args:
             pts: (B, M, 512, 3)
             rois: (B, M. 7)

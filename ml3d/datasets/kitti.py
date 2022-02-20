@@ -273,7 +273,6 @@ class KITTISplit():
         pc = self.dataset.read_lidar(pc_path)
         calib = self.dataset.read_calib(calib_path)
         label = self.dataset.read_label(label_path, calib)
-
         reduced_pc = DataProcessing.remove_outside_points(
             pc, calib['world_cam'], calib['cam_img'], [375, 1242])
 
@@ -284,6 +283,13 @@ class KITTISplit():
             'calib': calib,
             'bounding_boxes': label,
         }
+        # data = {
+        #     'point': pc,
+        #     'full_point': pc,
+        #     'feat': None,
+        #     'calib': calib,
+        #     'bounding_boxes': label,
+        # }
 
         return data
 
