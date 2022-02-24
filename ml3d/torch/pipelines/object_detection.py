@@ -285,7 +285,7 @@ class ObjectDetection(BasePipeline):
 
         is_resume = model.cfg.get('is_resume', True)
         start_ep = self.load_ckpt(model.cfg.ckpt_path, is_resume=is_resume)
-
+        print(start_ep)
         dataset_name = dataset.name if dataset is not None else ''
         tensorboard_dir = join(
             self.cfg.train_sum_dir,

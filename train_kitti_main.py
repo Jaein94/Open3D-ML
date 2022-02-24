@@ -2,7 +2,7 @@ import os
 import open3d.ml as _ml3d
 import open3d.ml.torch as ml3d
 
-cfg_file = "ml3d/configs/pointpillars_kitti.yml"
+cfg_file = "ml3d/configs/pointpillars_kitti_40ch.yml"
 cfg = _ml3d.utils.Config.load_from_file(cfg_file)
 
 model = ml3d.models.PointPillars(**cfg.model)

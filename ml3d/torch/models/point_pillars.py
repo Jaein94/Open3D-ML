@@ -39,6 +39,7 @@ from ..modules.losses.cross_entropy import CrossEntropyLoss
 from ...datasets.utils import BEVBox3D
 from ...datasets.augment import ObjdetAugmentation
 
+import matplotlib.pyplot as plt
 
 class PointPillars(BaseModel):
     """Object detection model. Based on the PointPillars architecture
@@ -102,6 +103,8 @@ class PointPillars(BaseModel):
     def extract_feats(self, points):
         """Extract features from points."""
         voxels, num_points, coors = self.voxelize(points)
+        # plt.plot(coors[:,2].cpu(),coors[:,3].cpu(),'ro',markersize=3)
+        # plt.show()
         voxel_features = self.voxel_encoder(voxels, num_points, coors)
         batch_size = coors[-1, 0].item() + 1
         x = self.middle_encoder(voxel_features, coors, batch_size)
@@ -129,6 +132,11 @@ class PointPillars(BaseModel):
 
     def forward(self, inputs):
         inputs = inputs.point
+        # tmp = []
+        # for inp_ in inputs:
+        #     inp_ = inp_[:,:3]
+        #     tmp.append(inp_)
+        # inputs = tmp
         x = self.extract_feats(inputs)
         outs = self.bbox_head(x)
         return outs
@@ -348,6 +356,8 @@ class PointPillarsVoxelization(torch.nn.Module):
             max_voxels = self.max_voxels[1]
 
         points = points_feats[:, :3]
+        
+        # points = points_feats[:, :2]
 
         num_voxels = ((self.points_range_max - self.points_range_min) /
                       self.voxel_size).type(torch.int32)
