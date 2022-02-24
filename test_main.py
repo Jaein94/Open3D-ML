@@ -6,7 +6,7 @@ from tqdm import tqdm
 import time
 import numpy as np
 
-cfg_file = "ml3d/configs/pointpillars_kitti.yml"
+cfg_file = "ml3d/configs/pointpillars_kitti_3ch.yml"
 # cfg_file = "ml3d/configs/pointpillars_kitti_40ch.yml"
 cfg = _ml3d.utils.Config.load_from_file(cfg_file)
 
@@ -22,7 +22,7 @@ pipeline = ml3d.pipelines.ObjectDetection(model, dataset=dataset, device="gpu", 
 # download the weights.
 ckpt_folder = "./logs/"
 os.makedirs(ckpt_folder, exist_ok=True)
-ckpt_path = ckpt_folder + "pointpillars_kitti_20220216.pth"
+ckpt_path = ckpt_folder + "pointpillars_ch3.pth"
 # pointpillar_url = "https://storage.googleapis.com/open3d-releases/model-zoo/pointpillars_kitti_202012221652utc.pth"
 # if not os.path.exists(ckpt_path):
 #     cmd = "wget {} -O {}".format(pointpillar_url, ckpt_path)
@@ -31,7 +31,7 @@ ckpt_path = ckpt_folder + "pointpillars_kitti_20220216.pth"
 # load the parameters.
 pipeline.load_ckpt(ckpt_path=ckpt_path)
 
-test_split = dataset.get_split("training")
+test_split = dataset.get_split("testing")
 # print(test_split.__dict__)
 
 
@@ -44,12 +44,11 @@ for val in sorted(dataset.label_to_names.keys()):
 # returns dict with 'predict_labels' and 'predict_scores'.
 boxes = []
 data_list = []
-for idx in tqdm(range(10)):
+for idx in tqdm(range(20)):
     data = test_split.get_data(idx)
     if np.max(np.unique(data['point'][:,3])) > 1:
-        data['point'][:,3] = np.round(data['point'][:,3]/255.0,3)
+        data['point'][:,3] = np.round(data['point'][:,3]/255.0 - 0.01,3)
     
-    print(np.unique(data['point'][:,3]))
     true_val = data['bounding_boxes']
     result = pipeline.run_inference(data)[0]
     pred = {

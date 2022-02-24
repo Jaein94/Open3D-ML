@@ -132,6 +132,11 @@ class PointPillars(BaseModel):
 
     def forward(self, inputs):
         inputs = inputs.point
+        # tmp = []
+        # for inp_ in inputs:
+        #     inp_ = inp_[:,:3]
+        #     tmp.append(inp_)
+        # inputs = tmp
         x = self.extract_feats(inputs)
         outs = self.bbox_head(x)
         return outs
@@ -351,6 +356,8 @@ class PointPillarsVoxelization(torch.nn.Module):
             max_voxels = self.max_voxels[1]
 
         points = points_feats[:, :3]
+        
+        # points = points_feats[:, :2]
 
         num_voxels = ((self.points_range_max - self.points_range_min) /
                       self.voxel_size).type(torch.int32)
@@ -382,9 +389,6 @@ class PointPillarsVoxelization(torch.nn.Module):
         out_voxels = out_voxels[in_bounds]
         out_num_points = out_num_points[in_bounds]
 
-        print(out_voxels, out_voxels.shape)
-        print(out_coords)
-        print(out_num_points)
         return out_voxels, out_coords, out_num_points
 
 
@@ -557,9 +561,7 @@ class PillarFeatureNet(nn.Module):
 
         for pfn in self.pfn_layers:
             features = pfn(features, num_points)
-        print(features.squeeze(dim=1).shape)
-        # plt.imshow(features.squeeze(dim=1).cpu().T,cmap='gray')
-        # plt.show()
+
         return features.squeeze(dim=1)
 
 
