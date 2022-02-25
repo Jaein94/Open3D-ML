@@ -13,11 +13,8 @@ model = ml3d.models.PointPillars(**cfg.model)
 # # use a cache for storing the results of the preprocessing (default path is './logs/cache')
 # # dataset = ml3d.datasets.KITTI(dataset_path='/home/amlab/KITTI_point', use_cache=True)
 
-# # prints training progress in the console.
-# pipeline.run_train()
-
 # use a cache for storing the results of the preprocessing (default path is './logs/cache')
-dataset = ml3d.datasets.NuScenes(dataset_path='/home/amlab/v1.0-mini', use_cache=True)
+dataset = ml3d.datasets.NuScenes(dataset_path='/home/amlab/v1.0-trainval', use_cache=True)
 
 # create the model with random initialization.
 # model = ml3d.models.PointPillars()
