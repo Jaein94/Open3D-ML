@@ -4,6 +4,8 @@ from datetime import datetime
 from os.path import exists, join
 from pathlib import Path
 
+import os
+
 from tqdm import tqdm
 import numpy as np
 import torch
@@ -251,6 +253,7 @@ class ObjectDetection(BasePipeline):
             np.int32).max))  # Random reproducible seed for torch
         model = self.model
         device = self.device
+
         dataset = self.dataset
 
         cfg = self.cfg

@@ -6,7 +6,7 @@ dataset:
 
 model:
   name: PointPillars
-  ckpt_path: './logs/pointpillars_kitti_20220216.pth'
+  ckpt_path: #'./logs/pointpillars_kitti_20220216.pth'
 
   batcher: "ignore"
 

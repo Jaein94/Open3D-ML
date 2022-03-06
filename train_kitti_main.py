@@ -22,7 +22,7 @@ dataset = ml3d.datasets.KITTI(dataset_path='/home/amlab/KITTI_point', use_cache=
 # create the model with random initialization.
 # model = ml3d.models.PointPillars()
 
-pipeline = ml3d.pipelines.ObjectDetection(model=model, dataset=dataset, **cfg.pipeline)
+pipeline = ml3d.pipelines.ObjectDetection(model=model, dataset=dataset, device='cuda:0', **cfg.pipeline)
 
 # prints training progress in the console.
 pipeline.run_train()
