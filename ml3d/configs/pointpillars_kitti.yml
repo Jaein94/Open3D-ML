@@ -1,12 +1,13 @@
 dataset:
   name: KITTI
-  dataset_path: '/home/amlab/KITTI_point'
+  dataset_path: #'/home/amlab/KITTI_point'
   cache_dir: ./logs/cache
   steps_per_epoch_train: 5000
 
 model:
   name: PointPillars
-  ckpt_path: './logs/pointpillars_kitti_20220216.pth'
+  ckpt_path: './logs/pointpillars_kitti_202012221652utc.pth'
+
 
   batcher: "ignore"
 
@@ -83,11 +84,11 @@ model:
 pipeline:
   name: ObjectDetection
   test_compute_metric: true
-  batch_size: 1
+  batch_size: 6
   val_batch_size: 1
   test_batch_size: 1
-  save_ckpt_freq: 5
-  max_epoch: 200
+  save_ckpt_freq: 10
+  max_epoch: 150
   main_log_dir: ./logs
   train_sum_dir: train_log
   grad_clip_norm: 2
