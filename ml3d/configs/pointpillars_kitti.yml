@@ -8,6 +8,7 @@ model:
   name: PointPillars
   ckpt_path: './logs/pointpillars_kitti_202012221652utc.pth'
 
+
   batcher: "ignore"
 
   point_cloud_range: [0, -39.68, -3, 69.12, 39.68, 1]
