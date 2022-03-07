@@ -2,6 +2,7 @@ import numpy as np
 import yaml
 import torch
 from abc import ABC, abstractmethod
+import os
 
 from os.path import join, exists, dirname, abspath
 
@@ -44,6 +45,8 @@ class BasePipeline(ABC):
         if device == 'cpu' or not torch.cuda.is_available():
             self.device = torch.device('cpu')
         else:
+            # os.environ["CUDA_VISIBLE_DEVICES"] = device.split(':')[1]
+            # print(device.split(':')[1])
             self.device = torch.device('cuda' if len(device.split(':')) ==
                                        1 else 'cuda:' + device.split(':')[1])
         self.summary = {}
